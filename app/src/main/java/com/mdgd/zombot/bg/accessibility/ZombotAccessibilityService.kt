@@ -11,7 +11,7 @@ import android.view.accessibility.AccessibilityNodeInfo
 import com.mdgd.zombot.BuildConfig
 import com.mdgd.zombot.ZomBotApp
 
-class MyAccessibilityService : AccessibilityService() {
+class ZombotAccessibilityService : AccessibilityService() {
 
     private val logger = ZomBotApp.getInstance()?.getComponent()?.logger
     private val cachedPrefs = ZomBotApp.getInstance()?.getComponent()?.cachedPrefs
@@ -66,14 +66,17 @@ class MyAccessibilityService : AccessibilityService() {
 
     override fun onAccessibilityEvent(event: AccessibilityEvent) {
         logEvent(event, null)
-        if (event.packageName == null) {
+        if (event.packageName == null
+            || AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED != event.eventType
+        ) {
             return
         }
-        // TODO: THINK HOW TO CHECK IF APP IN USE
-        if (cachedPrefs?.getPackagesToHandle()?.contains(event.packageName.toString()) == true) {
-
-        } else {
-
+        when {
+            cachedPrefs?.getPackagesToHandle()?.contains(event.packageName.toString()) == true -> {
+                cachedPrefs.putHandledAppActive(true)
+            }
+            event.source?.childCount == 0 -> return // ignore
+            else -> cachedPrefs?.putHandledAppActive(false)
         }
     }
 
@@ -83,7 +86,7 @@ class MyAccessibilityService : AccessibilityService() {
         if (event == null || !BuildConfig.DEBUG) {
             return
         }
-        Log.d("onAccessibilityEventLog", "\n* ${event.packageName}")
+        Log.d("onAccessibilityEventLog", "\n* phg ${event.packageName} type ${event.eventType}")
         showChildInfo(event.source, Rect(), 0, classFilter)
     }
 

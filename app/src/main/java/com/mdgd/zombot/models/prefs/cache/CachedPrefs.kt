@@ -14,4 +14,8 @@ interface CachedPrefs {
     fun getPackagesToHandleFlow(): Flow<List<String>>
     fun getPackagesToHandle(): List<String>
     fun putPackagesToHandle(packages: List<String>)
+
+    fun getHandledAppActiveFlow(): Flow<Boolean>
+    fun getHandledAppActive(): Boolean
+    fun putHandledAppActive(isActive: Boolean)
 }

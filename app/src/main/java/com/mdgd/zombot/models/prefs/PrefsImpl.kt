@@ -10,9 +10,7 @@ const val KEY_ACCESSIBILITY_RUNNING = "article_font_scale_hint_shown"
 const val KEY_PACKAGES = "newest_flash_id"
 
 
-class PrefsImpl(
-    private val appCtx: Context
-) : BasicPrefsImpl(appCtx), Prefs {
+class PrefsImpl(appCtx: Context) : BasicPrefsImpl(appCtx), Prefs {
 
     override fun getDefaultPrefsFileName(): String = "prefs_zombot"
 
@@ -39,6 +37,6 @@ class PrefsImpl(
     }
 
     override fun putPackagesToHandle(packages: List<String>) {
-        put(KEY_PACKAGES, Gson().toJson(packages))
+        put(KEY_PACKAGES, Gson().toJson(packages)) // com.global.ztmslg
     }
 }

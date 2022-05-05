@@ -9,6 +9,7 @@ class CachedPrefsImpl(private val prefs: Prefs) : CachedPrefs {
     private val captorFlow = MutableStateFlow(prefs.getCaptorRunning())
     private val accessibilityFlow = MutableStateFlow(prefs.getAccessibilityRunning())
     private val packagesFlow = MutableStateFlow(prefs.getPackagesToHandle())
+    private val appHandleFlow = MutableStateFlow(prefs.getCaptorRunning())
 
 
     override fun getCaptorRunningFlow(): Flow<Boolean> = captorFlow
@@ -36,5 +37,13 @@ class CachedPrefsImpl(private val prefs: Prefs) : CachedPrefs {
     override fun putPackagesToHandle(packages: List<String>) {
         packagesFlow.tryEmit(packages)
         prefs.putPackagesToHandle(packages)
+    }
+
+    override fun getHandledAppActiveFlow(): Flow<Boolean> = appHandleFlow
+
+    override fun getHandledAppActive(): Boolean = appHandleFlow.value
+
+    override fun putHandledAppActive(isActive: Boolean) {
+        appHandleFlow.tryEmit(isActive)
     }
 }

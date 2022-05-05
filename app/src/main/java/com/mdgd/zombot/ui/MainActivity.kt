@@ -10,7 +10,7 @@ import android.view.View
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.appcompat.app.AppCompatActivity
 import com.mdgd.zombot.R
-import com.mdgd.zombot.bg.accessibility.MyAccessibilityService
+import com.mdgd.zombot.bg.accessibility.ZombotAccessibilityService
 import com.mdgd.zombot.bg.captor.ScreenCaptureService
 
 
@@ -43,7 +43,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             stopService(ScreenCaptureService.getStopIntent(this))
         } else if (p0?.id == R.id.accessibility) {
             if (isAccessibilityEnabled()) {
-                startService(Intent(this, MyAccessibilityService::class.java))
+                startService(Intent(this, ZombotAccessibilityService::class.java))
             } else {
                 accessibilityRequestLauncher.launch(1)
             }
@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun isAccessibilityEnabled(): Boolean {
         var accessibilityEnabled = 0
-        val service = packageName + "/" + MyAccessibilityService::class.java.canonicalName
+        val service = packageName + "/" + ZombotAccessibilityService::class.java.canonicalName
         val contentResolver = contentResolver
         try {
             accessibilityEnabled = Settings.Secure.getInt(
