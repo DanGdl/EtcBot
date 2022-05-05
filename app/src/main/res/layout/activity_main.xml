@@ -7,7 +7,7 @@
     tools:context=".ui.MainActivity">
 
     <TextView
-        android:id="@+id/start"
+        android:id="@+id/captor_start"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Hello World!"
@@ -18,7 +18,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/stop"
+        android:id="@+id/captor_stop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Bye World!"
@@ -30,10 +30,10 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/accessibility"
+        android:id="@+id/accessibility_start"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Accessibility!"
+        android:text="Hi Accessibility!"
         android:padding="5dp"
         app:layout_constraintVertical_bias="0.7"
         app:layout_constraintBottom_toBottomOf="parent"

@@ -1,8 +1,11 @@
 package com.mdgd.zombot.bg.accessibility
 
+import android.accessibilityservice.AccessibilityGestureEvent
 import android.accessibilityservice.AccessibilityService
+import android.content.Context
 import android.content.Intent
 import android.graphics.Rect
+import android.provider.Settings
 import android.text.TextUtils
 import android.util.Log
 import android.view.KeyEvent
@@ -12,6 +15,41 @@ import com.mdgd.zombot.BuildConfig
 import com.mdgd.zombot.ZomBotApp
 
 class ZombotAccessibilityService : AccessibilityService() {
+
+    companion object {
+
+        fun getIntent(context: Context): Intent {
+            return Intent(context, ZombotAccessibilityService::class.java)
+        }
+
+        fun isAccessibilityEnabled(ctx: Context): Boolean {
+            var accessibilityEnabled = 0
+            val service =
+                "${ctx.packageName}/${ZombotAccessibilityService::class.java.canonicalName}"
+            try {
+                accessibilityEnabled = Settings.Secure.getInt(
+                    ctx.contentResolver, Settings.Secure.ACCESSIBILITY_ENABLED
+                )
+            } catch (e: Settings.SettingNotFoundException) {
+                e.printStackTrace()
+            }
+            if (accessibilityEnabled == 1) {
+                val settingValue: String = Settings.Secure.getString(
+                    ctx.contentResolver, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
+                )
+                val mStringColonSplitter = TextUtils.SimpleStringSplitter(':')
+                mStringColonSplitter.setString(settingValue)
+                while (mStringColonSplitter.hasNext()) {
+                    val accessibilityService = mStringColonSplitter.next()
+                    if (accessibilityService.equals(service, ignoreCase = true)) {
+                        return true
+                    }
+                }
+            }
+            return false
+        }
+    }
+
 
     private val logger = ZomBotApp.getInstance()?.getComponent()?.logger
     private val cachedPrefs = ZomBotApp.getInstance()?.getComponent()?.cachedPrefs
@@ -27,6 +65,7 @@ class ZombotAccessibilityService : AccessibilityService() {
     }
 
     override fun onInterrupt() {
+        logger?.log("Accessibility onInterrupt")
         cachedPrefs?.putAccessibilityRunning(false)
     }
 
@@ -38,6 +77,11 @@ class ZombotAccessibilityService : AccessibilityService() {
     override fun onUnbind(intent: Intent): Boolean {
         logger?.log("Accessibility onServiceConnected")
         return super.onUnbind(intent)
+    }
+
+    override fun onGesture(gestureEvent: AccessibilityGestureEvent): Boolean {
+        logger?.log("Accessibility onGesture")
+        return super.onGesture(gestureEvent)
     }
 
     override fun onKeyEvent(event: KeyEvent): Boolean {
@@ -86,7 +130,7 @@ class ZombotAccessibilityService : AccessibilityService() {
         if (event == null || !BuildConfig.DEBUG) {
             return
         }
-        Log.d("onAccessibilityEventLog", "\n* phg ${event.packageName} type ${event.eventType}")
+        Log.d("AccessLOGG", "\n* phg ${event.packageName} type ${event.eventType}")
         showChildInfo(event.source, Rect(), 0, classFilter)
     }
 
@@ -118,13 +162,13 @@ class ZombotAccessibilityService : AccessibilityService() {
     ) {
         if (child != null) {
             if (child.className == null) {
-                Log.d("onAccessibilityEventLog", "child $child")
+                Log.d("AccessLOGG", "child $child")
             } else {
                 val cls = child.className.toString()
                 if (TextUtils.isEmpty(filter) || cls.contains(filter!!)) {
                     child.getBoundsInScreen(rS)
                     Log.d(
-                        "onAccessibilityEventLog",
+                        "AccessLOGG",
                         padding + "cls: " + cls + ", posS " + rS.toShortString() + ", desc "
                                 + child.contentDescription + ", txt " + child.text
                     )
