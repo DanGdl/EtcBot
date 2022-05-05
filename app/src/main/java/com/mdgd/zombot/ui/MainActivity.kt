@@ -5,7 +5,6 @@ import android.content.Intent
 import android.media.projection.MediaProjectionManager
 import android.os.Bundle
 import android.provider.Settings
-import android.text.TextUtils.SimpleStringSplitter
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.appcompat.app.AppCompatActivity
@@ -24,59 +23,32 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     private var accessibilityRequestLauncher =
         registerForActivityResult(AccessibilityRequestHandler()) {
             if (it == RESULT_OK) {
-                onClick(findViewById(R.id.accessibility))
+                onClick(findViewById(R.id.accessibility_start))
             }
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        findViewById<View>(R.id.start).setOnClickListener(this)
-        findViewById<View>(R.id.stop).setOnClickListener(this)
-        findViewById<View>(R.id.accessibility).setOnClickListener(this)
+
+        findViewById<View>(R.id.captor_start).setOnClickListener(this)
+        findViewById<View>(R.id.captor_stop).setOnClickListener(this)
+        findViewById<View>(R.id.accessibility_start).setOnClickListener(this)
     }
 
     override fun onClick(p0: View?) {
-        if (p0?.id == R.id.start) {
+        if (p0?.id == R.id.captor_start) {
             screenshotRequestLauncher.launch(1)
-        } else if (p0?.id == R.id.stop) {
+        } else if (p0?.id == R.id.captor_stop) {
             stopService(ScreenCaptureService.getStopIntent(this))
-        } else if (p0?.id == R.id.accessibility) {
-            if (isAccessibilityEnabled()) {
-                startService(Intent(this, ZombotAccessibilityService::class.java))
+        } else if (p0?.id == R.id.accessibility_start) {
+            if (ZombotAccessibilityService.isAccessibilityEnabled(this)) {
+                startService(ZombotAccessibilityService.getIntent(this))
             } else {
                 accessibilityRequestLauncher.launch(1)
             }
         }
     }
-
-    private fun isAccessibilityEnabled(): Boolean {
-        var accessibilityEnabled = 0
-        val service = packageName + "/" + ZombotAccessibilityService::class.java.canonicalName
-        val contentResolver = contentResolver
-        try {
-            accessibilityEnabled = Settings.Secure.getInt(
-                contentResolver, Settings.Secure.ACCESSIBILITY_ENABLED
-            )
-        } catch (e: Settings.SettingNotFoundException) {
-            e.printStackTrace()
-        }
-        if (accessibilityEnabled == 1) {
-            val settingValue: String = Settings.Secure.getString(
-                contentResolver, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
-            )
-            val mStringColonSplitter = SimpleStringSplitter(':')
-            mStringColonSplitter.setString(settingValue)
-            while (mStringColonSplitter.hasNext()) {
-                val accessibilityService = mStringColonSplitter.next()
-                if (accessibilityService.equals(service, ignoreCase = true)) {
-                    return true
-                }
-            }
-        }
-        return false
-    }
-
 
     inner class AccessibilityRequestHandler : ActivityResultContract<Int, Int>() {
 
