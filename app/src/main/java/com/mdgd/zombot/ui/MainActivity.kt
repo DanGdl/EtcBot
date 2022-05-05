@@ -5,13 +5,14 @@ import android.content.Intent
 import android.media.projection.MediaProjectionManager
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.appcompat.app.AppCompatActivity
 import com.mdgd.zombot.R
 import com.mdgd.zombot.bg.accessibility.ZombotAccessibilityService
 import com.mdgd.zombot.bg.captor.ScreenCaptureService
-
+import org.opencv.android.OpenCVLoader
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
 
@@ -26,6 +27,15 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 onClick(findViewById(R.id.accessibility_start))
             }
         }
+
+    init {
+        if(OpenCVLoader.initDebug()){
+            Log.d("LOGG", "OpenCv configured successfully")
+        } else{
+            Log.d("LOGG", "OpenCv doesn’t configured successfully")
+        }
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
