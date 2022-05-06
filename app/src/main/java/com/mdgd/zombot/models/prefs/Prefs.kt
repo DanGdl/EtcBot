@@ -9,4 +9,7 @@ interface Prefs {
 
     fun getPackagesToHandle(): List<String>
     fun putPackagesToHandle(packages: List<String>)
+
+    fun putBotActive(active: Boolean)
+    fun getBotActive(): Boolean
 }

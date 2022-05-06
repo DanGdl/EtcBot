@@ -8,7 +8,7 @@ import com.google.gson.reflect.TypeToken
 const val KEY_CAPTOR_RUNNING = "captor"
 const val KEY_ACCESSIBILITY_RUNNING = "article_font_scale_hint_shown"
 const val KEY_PACKAGES = "newest_flash_id"
-
+const val KEY_BOT_ACTIVE = "bot_active"
 
 class PrefsImpl(appCtx: Context) : BasicPrefsImpl(appCtx), Prefs {
 
@@ -39,4 +39,10 @@ class PrefsImpl(appCtx: Context) : BasicPrefsImpl(appCtx), Prefs {
     override fun putPackagesToHandle(packages: List<String>) {
         put(KEY_PACKAGES, Gson().toJson(packages)) // com.global.ztmslg
     }
+
+    override fun putBotActive(active: Boolean) {
+        put(KEY_BOT_ACTIVE, active)
+    }
+
+    override fun getBotActive() = get(KEY_BOT_ACTIVE, false)
 }

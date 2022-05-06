@@ -1,0 +1,4 @@
+ 
+1. Infra to Launch/Stop bot
+2. Create Scenario
+3. Execute scenario

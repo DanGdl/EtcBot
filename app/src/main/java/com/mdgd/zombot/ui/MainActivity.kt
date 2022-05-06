@@ -60,6 +60,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
+
     inner class AccessibilityRequestHandler : ActivityResultContract<Int, Int>() {
 
         override fun createIntent(context: Context, input: Int?): Intent {

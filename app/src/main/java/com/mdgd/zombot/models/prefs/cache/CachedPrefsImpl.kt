@@ -6,10 +6,20 @@ import kotlinx.coroutines.flow.MutableStateFlow
 
 class CachedPrefsImpl(private val prefs: Prefs) : CachedPrefs {
 
+    private val botActiveFlow = MutableStateFlow(prefs.getBotActive())
     private val captorFlow = MutableStateFlow(prefs.getCaptorRunning())
     private val accessibilityFlow = MutableStateFlow(prefs.getAccessibilityRunning())
     private val packagesFlow = MutableStateFlow(prefs.getPackagesToHandle())
     private val appHandleFlow = MutableStateFlow(prefs.getCaptorRunning())
+
+    override fun getBotActiveFlow(): Flow<Boolean> = botActiveFlow
+
+    override fun getBotActive() = botActiveFlow.value
+
+    override fun putBotActive(isActive: Boolean) {
+        botActiveFlow.tryEmit(isActive)
+        prefs.putBotActive(isActive)
+    }
 
 
     override fun getCaptorRunningFlow(): Flow<Boolean> = captorFlow

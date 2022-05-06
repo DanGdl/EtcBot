@@ -3,6 +3,11 @@ package com.mdgd.zombot.models.prefs.cache
 import kotlinx.coroutines.flow.Flow
 
 interface CachedPrefs {
+
+    fun getBotActiveFlow(): Flow<Boolean>
+    fun getBotActive(): Boolean
+    fun putBotActive(isActive: Boolean)
+
     fun getCaptorRunningFlow(): Flow<Boolean>
     fun getCaptorRunning(): Boolean
     fun putCaptorRunning(isRunning: Boolean)

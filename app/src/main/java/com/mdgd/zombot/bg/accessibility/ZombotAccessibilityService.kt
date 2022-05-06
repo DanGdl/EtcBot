@@ -2,8 +2,10 @@ package com.mdgd.zombot.bg.accessibility
 
 import android.accessibilityservice.AccessibilityGestureEvent
 import android.accessibilityservice.AccessibilityService
+import android.accessibilityservice.GestureDescription
 import android.content.Context
 import android.content.Intent
+import android.graphics.Path
 import android.graphics.Rect
 import android.provider.Settings
 import android.text.TextUtils
@@ -122,6 +124,36 @@ class ZombotAccessibilityService : AccessibilityService() {
             event.source?.childCount == 0 -> return // ignore
             else -> cachedPrefs?.putHandledAppActive(false)
         }
+    }
+
+    private fun createClick(x: Float, y: Float): GestureDescription {
+        val clickPath = Path()
+        clickPath.moveTo(x, y)
+        val clickStroke = GestureDescription.StrokeDescription(clickPath, 0, 1L)
+        val clickBuilder = GestureDescription.Builder()
+        clickBuilder.addStroke(clickStroke)
+        return clickBuilder.build()
+    }
+
+    private fun doClick() {
+        // callback invoked either when the gesture has been completed or cancelled
+        val callback = object : AccessibilityService.GestureResultCallback() {
+
+            override fun onCompleted(gestureDescription: GestureDescription) {
+                super.onCompleted(gestureDescription)
+                logger?.log("Accessibility gesture completed")
+            }
+
+            override fun onCancelled(gestureDescription: GestureDescription) {
+                super.onCancelled(gestureDescription)
+                logger?.log("Accessibility gesture cancelled")
+            }
+        };
+
+        // accessibilityService: contains a reference to an accessibility service
+        // callback: can be null if you don't care about gesture termination
+        val result = dispatchGesture(createClick(50F, 50F), callback, null)
+        logger?.log("Accessibility Gesture dispatched? $result")
     }
 
 
